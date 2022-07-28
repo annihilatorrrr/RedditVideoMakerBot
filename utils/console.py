@@ -64,7 +64,7 @@ def handle_input(
             return default
     if options is None:
         match = re.compile(match)
-        console.print("[green bold]" + extra_info, no_wrap=True)
+        console.print(f"[green bold]{extra_info}", no_wrap=True)
         while True:
             console.print(message, end="")
             user_input = input("").strip()
@@ -75,15 +75,19 @@ def handle_input(
                         nmax is not None and user_input > nmax
                     ):
                         # FAILSTATE Input out of bounds
-                        console.print("[red]" + oob_error)
+                        console.print(f"[red]{oob_error}")
                         continue
                     break  # Successful type conversion and number in bounds
                 except ValueError:
                     # Type conversion failed
-                    console.print("[red]" + err_message)
+                    console.print(f"[red]{err_message}")
                     continue
             elif match != "" and re.match(match, user_input) is None:
-                console.print("[red]" + err_message + "\nAre you absolutely sure it's correct?(y/n)")
+                console.print(
+                    f"[red]{err_message}"
+                    + "\nAre you absolutely sure it's correct?(y/n)"
+                )
+
                 if input().casefold().startswith("y"):
                     break
                 continue
@@ -92,7 +96,7 @@ def handle_input(
                 if (nmin is not None and len(user_input) < nmin) or (
                     nmax is not None and len(user_input) > nmax
                 ):
-                    console.print("[red bold]" + oob_error)
+                    console.print(f"[red bold]{oob_error}")
                     continue
                 break  # SUCCESS Input STRING in bounds
         return user_input
@@ -116,5 +120,8 @@ def handle_input(
         if user_input in options:
             return user_input
         console.print(
-            "[red bold]" + err_message + "\nValid options are: " + ", ".join(map(str, options)) + "."
+            f"[red bold]{err_message}"
+            + "\nValid options are: "
+            + ", ".join(map(str, options))
+            + "."
         )

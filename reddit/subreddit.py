@@ -17,7 +17,6 @@ def get_subreddit_threads(POST_ID: str):
 
     print_substep("Logging into Reddit.")
 
-    content = {}
     if settings.config["reddit"]["creds"]["2fa"]:
         print("\nEnter your two-factor authentication code from your authenticator app.\n")
         code = input("> ")
@@ -83,11 +82,13 @@ def get_subreddit_threads(POST_ID: str):
     print_substep(f"Thread has a upvote ratio of {ratio}%", style="bold blue")
     print_substep(f"Thread has {num_comments} comments", style="bold blue")
 
-    content["thread_url"] = f"https://reddit.com{submission.permalink}"
-    content["thread_title"] = submission.title
-    content["thread_post"] = submission.selftext
-    content["thread_id"] = submission.id
-    content["comments"] = []
+    content = {
+        "thread_url": f"https://reddit.com{submission.permalink}",
+        "thread_title": submission.title,
+        "thread_post": submission.selftext,
+        "thread_id": submission.id,
+        "comments": [],
+    }
 
     for top_level_comment in submission.comments:
         if isinstance(top_level_comment, MoreComments):
@@ -100,17 +101,16 @@ def get_subreddit_threads(POST_ID: str):
                 continue
             if len(top_level_comment.body) <= int(
                 settings.config["reddit"]["thread"]["max_comment_length"]
+            ) and (
+                top_level_comment.author is not None
+                and sanitize_text(top_level_comment.body) is not None
             ):
-                if (
-                    top_level_comment.author is not None
-                    and sanitize_text(top_level_comment.body) is not None
-                ):  # if errors occur with this change to if not.
-                    content["comments"].append(
-                        {
-                            "comment_body": top_level_comment.body,
-                            "comment_url": top_level_comment.permalink,
-                            "comment_id": top_level_comment.id,
-                        }
-                    )
+                content["comments"].append(
+                    {
+                        "comment_body": top_level_comment.body,
+                        "comment_url": top_level_comment.permalink,
+                        "comment_id": top_level_comment.id,
+                    }
+                )
     print_substep("Received subreddit threads Successfully.", style="bold green")
     return content

@@ -35,12 +35,12 @@ class StreamlabsPolly:
     def run(self, text, filepath, random_voice: bool = False):
         if random_voice:
             voice = self.randomvoice()
-        else:
-            if not settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
-                raise ValueError(
-                    f"Please set the config variable STREAMLABS_POLLY_VOICE to a valid voice. options are: {voices}"
-                )
+        elif settings.config["settings"]["tts"]["streamlabs_polly_voice"]:
             voice = str(settings.config["settings"]["tts"]["streamlabs_polly_voice"]).capitalize()
+        else:
+            raise ValueError(
+                f"Please set the config variable STREAMLABS_POLLY_VOICE to a valid voice. options are: {voices}"
+            )
         body = {"voice": voice, "text": text, "service": "polly"}
         response = requests.post(self.url, data=body)
         if not check_ratelimit(response):
@@ -51,11 +51,11 @@ class StreamlabsPolly:
                 voice_data = requests.get(response.json()["speak_url"])
                 with open(filepath, "wb") as f:
                     f.write(voice_data.content)
-            except (KeyError, JSONDecodeError):
+            except KeyError:
                 try:
                     if response.json()["error"] == "No text specified!":
                         raise ValueError("Please specify a text to convert to speech.")
-                except (KeyError, JSONDecodeError):
+                except KeyError:
                     print("Error occurred calling Streamlabs Polly")
 
     def randomvoice(self):

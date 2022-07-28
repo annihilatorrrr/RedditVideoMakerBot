@@ -30,13 +30,11 @@ def name_normalize(name: str) -> str:
     name = re.sub(r"(\w+)\s?\/\s?(\w+)", r"\1 or \2", name)
     name = re.sub(r"\/", r"", name)
 
-    lang = settings.config["reddit"]["thread"]["post_lang"]
-    if lang:
+    if lang := settings.config["reddit"]["thread"]["post_lang"]:
         import translators as ts
 
         print_substep("Translating filename...")
-        translated_name = ts.google(name, to_language=lang)
-        return translated_name
+        return ts.google(name, to_language=lang)
 
     else:
         return name
@@ -90,13 +88,13 @@ def make_final_video(
         .set_opacity(new_opacity),
     )
 
-    for i in range(0, number_of_clips):
-        image_clips.append(
-            ImageClip(f"assets/temp/png/comment_{i}.png")
-            .set_duration(audio_clips[i + 1].duration)
-            .resize(width=W - 100)
-            .set_opacity(new_opacity)
-        )
+    image_clips.extend(
+        ImageClip(f"assets/temp/png/comment_{i}.png")
+        .set_duration(audio_clips[i + 1].duration)
+        .resize(width=W - 100)
+        .set_opacity(new_opacity)
+        for i in range(number_of_clips)
+    )
 
     # if os.path.exists("assets/mp3/posttext.mp3"):
     #    image_clips.insert(

@@ -35,12 +35,12 @@ class AWSPolly:
             polly = session.client("polly")
             if random_voice:
                 voice = self.randomvoice()
-            else:
-                if not settings.config["settings"]["tts"]["aws_polly_voice"]:
-                    raise ValueError(
-                        f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
-                    )
+            elif settings.config["settings"]["tts"]["aws_polly_voice"]:
                 voice = str(settings.config["settings"]["tts"]["aws_polly_voice"]).capitalize()
+            else:
+                raise ValueError(
+                    f"Please set the TOML variable AWS_VOICE to a valid voice. options are: {voices}"
+                )
             try:
                 # Request speech synthesis
                 response = polly.synthesize_speech(
@@ -53,10 +53,9 @@ class AWSPolly:
 
             # Access the audio stream from the response
             if "AudioStream" in response:
-                file = open(filepath, "wb")
-                file.write(response["AudioStream"].read())
-                file.close()
-                # print_substep(f"Saved Text {idx} to MP3 files successfully.", style="bold green")
+                with open(filepath, "wb") as file:
+                    file.write(response["AudioStream"].read())
+                        # print_substep(f"Saved Text {idx} to MP3 files successfully.", style="bold green")
 
             else:
                 # The response didn't contain audio data, exit gracefully

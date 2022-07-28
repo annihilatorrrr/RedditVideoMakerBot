@@ -57,7 +57,4 @@ def already_done(done_videos: list, submission) -> bool:
         Boolean: Whether the video was found in the list
     """
 
-    for video in done_videos:
-        if video["id"] == str(submission):
-            return True
-    return False
+    return any(video["id"] == str(submission) for video in done_videos)

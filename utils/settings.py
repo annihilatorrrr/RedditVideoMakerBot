@@ -15,7 +15,7 @@ config = dict  # autocomplete
 def crawl(obj: dict, func=lambda x, y: print(x, y, end="\n"), path=None):
     if path is None:  # path Default argument value is mutable
         path = []
-    for key in obj.keys():
+    for key in obj:
         if type(obj[key]) is dict:
             crawl(obj[key], func, path + [key])
             continue
@@ -95,7 +95,7 @@ def check(value, checks, name):
 
 
 def crawl_and_check(obj: dict, path: list, checks: dict = {}, name=""):
-    if len(path) == 0:
+    if not path:
         return check(obj, checks, name)
     if path[0] not in obj.keys():
         obj[path[0]] = {}
