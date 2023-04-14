@@ -17,9 +17,7 @@ def draw_multiple_line_text(
     Fontperm = font.getsize(text)
     image_width, image_height = image.size
     lines = textwrap.wrap(text, width=wrap)
-    y = (image_height / 2) - (
-        ((Fontperm[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2
-    )
+    y = (image_height / 2) - (((Fontperm[1] + (len(lines) * padding) / len(lines)) * len(lines)) / 2)
     for line in lines:
         line_width, line_height = font.getsize(line)
         if transparent:
@@ -57,9 +55,7 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
     """
     Render Images for video
     """
-    title = process_text(
-        reddit_obj["thread_title"], False
-    )
+    title = process_text(reddit_obj["thread_title"], False)
     texts = reddit_obj["thread_post"]
     id = re.sub(r"[^\w\s-]", "", reddit_obj["thread_id"])
 
@@ -67,25 +63,19 @@ def imagemaker(theme, reddit_obj: dict, txtclr, padding=5, transparent=False) ->
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 50)
         tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 50)
     else:
-        tfont = ImageFont.truetype(
-            os.path.join("fonts", "Roboto-Bold.ttf"), 35
-        )  # for title
+        tfont = ImageFont.truetype(os.path.join("fonts", "Roboto-Bold.ttf"), 35)  # for title
         font = ImageFont.truetype(os.path.join("fonts", "Roboto-Regular.ttf"), 30)
     size = (1920, 1080)
 
     image = Image.new("RGBA", size, theme)
 
     # for title
-    draw_multiple_line_text(
-        image, title, tfont, txtclr, padding, wrap=30, transparent=transparent
-    )
+    draw_multiple_line_text(image, title, tfont, txtclr, padding, wrap=30, transparent=transparent)
 
     image.save(f"assets/temp/{id}/png/title.png")
 
     for idx, text in track(enumerate(texts), "Rendering Image"):
         image = Image.new("RGBA", size, theme)
         text = process_text(text, False)
-        draw_multiple_line_text(
-            image, text, font, txtclr, padding, wrap=30, transparent=transparent
-        )
+        draw_multiple_line_text(image, text, font, txtclr, padding, wrap=30, transparent=transparent)
         image.save(f"assets/temp/{id}/png/img{idx}.png")

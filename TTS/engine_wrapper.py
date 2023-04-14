@@ -73,17 +73,13 @@ class TTSEngine:
                 if len(self.reddit_object["thread_post"]) > self.tts_module.max_chars:
                     self.split_post(self.reddit_object["thread_post"], "postaudio")
                 else:
-                    self.call_tts(
-                        "postaudio", process_text(self.reddit_object["thread_post"])
-                    )
+                    self.call_tts("postaudio", process_text(self.reddit_object["thread_post"]))
             elif settings.config["settings"]["storymodemethod"] == 1:
                 for idx, text in track(enumerate(self.reddit_object["thread_post"])):
                     self.call_tts(f"postaudio-{idx}", process_text(text))
 
         else:
-            for idx, comment in track(
-                enumerate(self.reddit_object["comments"]), "Saving..."
-            ):
+            for idx, comment in track(enumerate(self.reddit_object["comments"]), "Saving..."):
                 # ! Stop creating mp3 files if the length is greater than max length.
                 if self.length > self.max_length and idx > 1:
                     self.length -= self.last_clip_length
@@ -162,9 +158,7 @@ class TTSEngine:
             fps=44100,
         )
         silence = volumex(silence, 0)
-        silence.write_audiofile(
-            f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None
-        )
+        silence.write_audiofile(f"{self.path}/silence.mp3", fps=44100, verbose=False, logger=None)
 
 
 def process_text(text: str, clean: bool = True):

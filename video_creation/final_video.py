@@ -2,7 +2,7 @@ import multiprocessing
 import os
 import re
 import shutil
-from os.path import exists # Needs to be imported specifically
+from os.path import exists  # Needs to be imported specifically
 from typing import Final
 from typing import Tuple, Any
 
@@ -131,42 +131,27 @@ def make_final_video(
     if settings.config["settings"]["storymode"]:
         if settings.config["settings"]["storymodemethod"] == 0:
             audio_clips = [ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")]
-            audio_clips.insert(
-                1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3")
-            )
+            audio_clips.insert(1, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio.mp3"))
         elif settings.config["settings"]["storymodemethod"] == 1:
             audio_clips = [
                 ffmpeg.input(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")
-                for i in track(
-                    range(number_of_clips + 1), "Collecting the audio files..."
-                )
+                for i in track(range(number_of_clips + 1), "Collecting the audio files...")
             ]
-            audio_clips.insert(
-                0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3")
-            )
+            audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
     else:
         audio_clips = [
-            ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3")
-            for i in range(number_of_clips)
+            ffmpeg.input(f"assets/temp/{reddit_id}/mp3/{i}.mp3") for i in range(number_of_clips)
         ]
         audio_clips.insert(0, ffmpeg.input(f"assets/temp/{reddit_id}/mp3/title.mp3"))
 
         audio_clips_durations = [
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/{i}.mp3")["format"][
-                    "duration"
-                ]
-            )
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/{i}.mp3")["format"]["duration"])
             for i in range(number_of_clips)
         ]
         audio_clips_durations.insert(
             0,
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"][
-                    "duration"
-                ]
-            ),
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
     audio_concat = ffmpeg.concat(*audio_clips, a=1, v=0)
     ffmpeg.output(
@@ -191,19 +176,13 @@ def make_final_video(
     if settings.config["settings"]["storymode"]:
         audio_clips_durations = [
             float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")[
-                    "format"
-                ]["duration"]
+                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/postaudio-{i}.mp3")["format"]["duration"]
             )
             for i in range(number_of_clips)
         ]
         audio_clips_durations.insert(
             0,
-            float(
-                ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"][
-                    "duration"
-                ]
-            ),
+            float(ffmpeg.probe(f"assets/temp/{reddit_id}/mp3/title.mp3")["format"]["duration"]),
         )
         if settings.config["settings"]["storymodemethod"] == 0:
             image_clips.insert(
@@ -220,9 +199,7 @@ def make_final_video(
             )
             current_time += audio_clips_durations[1]
         elif settings.config["settings"]["storymodemethod"] == 1:
-            for i in track(
-                range(0, number_of_clips + 1), "Collecting the image files..."
-            ):
+            for i in track(range(0, number_of_clips + 1), "Collecting the image files..."):
                 image_clips.append(
                     ffmpeg.input(f"assets/temp/{reddit_id}/png/img{i}.png")["v"].filter(
                         "scale", screenshot_width, -1
@@ -238,9 +215,9 @@ def make_final_video(
     else:
         for i in range(0, number_of_clips + 1):
             image_clips.append(
-                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")[
-                    "v"
-                ].filter("scale", screenshot_width, -1)
+                ffmpeg.input(f"assets/temp/{reddit_id}/png/comment_{i}.png")["v"].filter(
+                    "scale", screenshot_width, -1
+                )
             )
             background_clip = background_clip.overlay(
                 image_clips[i],
@@ -270,11 +247,7 @@ def make_final_video(
             os.makedirs(f"./results/{subreddit}/thumbnails")
         # get the first file with the .png extension from assets/backgrounds and use it as a background for the thumbnail
         first_image = next(
-            (
-                file
-                for file in os.listdir("assets/backgrounds")
-                if file.endswith(".png")
-            ),
+            (file for file in os.listdir("assets/backgrounds") if file.endswith(".png")),
             None,
         )
         if first_image is None:
@@ -296,9 +269,7 @@ def make_final_video(
                 title_thumb,
             )
             thumbnailSave.save(f"./assets/temp/{reddit_id}/thumbnail.png")
-            print_substep(
-                f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png"
-            )
+            print_substep(f"Thumbnail - Building Thumbnail in assets/temp/{reddit_id}/thumbnail.png")
 
     text = f"Background by {background_config[2]}"
     background_clip = ffmpeg.drawtext(

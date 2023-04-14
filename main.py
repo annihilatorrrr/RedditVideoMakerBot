@@ -80,12 +80,12 @@ def shutdown():
 
 if __name__ == "__main__":
     if sys.version_info.major != 3 or sys.version_info.minor != 10:
-        print("Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again.")
-    ffmpeg_install() # install ffmpeg if not installed
+        print(
+            "Hey! Congratulations, you've made it so far (which is pretty rare with no Python 3.10). Unfortunately, this program only works on Python 3.10. Please install Python 3.10 and try again."
+        )
+    ffmpeg_install()  # install ffmpeg if not installed
     directory = Path().absolute()
-    config = settings.check_toml(
-        f"{directory}/utils/.config.template.toml", "config.toml"
-    )
+    config = settings.check_toml(f"{directory}/utils/.config.template.toml", "config.toml")
     config is False and exit()
     if (
         not settings.config["settings"]["tts"]["tiktok_sessionid"]
@@ -98,9 +98,7 @@ if __name__ == "__main__":
         exit()
     try:
         if config["reddit"]["thread"]["post_id"]:
-            for index, post_id in enumerate(
-                config["reddit"]["thread"]["post_id"].split("+")
-            ):
+            for index, post_id in enumerate(config["reddit"]["thread"]["post_id"].split("+")):
                 index += 1
                 print_step(
                     f'on the {index}{("st" if index % 10 == 1 else ("nd" if index % 10 == 2 else ("rd" if index % 10 == 3 else "th")))} post of {len(config["reddit"]["thread"]["post_id"].split("+"))}'
